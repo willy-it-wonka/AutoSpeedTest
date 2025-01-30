@@ -8,6 +8,8 @@ from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
+from screenshot import take_screenshot
+
 GECKODRIVER_PATH = "/snap/bin/geckodriver"
 SPEEDTEST_URL = "http://www.speedtest.net"
 ACCEPT_XPATH = '//*[@id="onetrust-accept-btn-handler"]'
@@ -59,6 +61,6 @@ def run_speedtest():
         accept_cookies(driver)
         start_speedtest(driver)
         close_privacy_policy(driver)
-        time.sleep(90)  # TODO: screenshot
+        take_screenshot(driver)
     finally:
         driver.quit()
