@@ -1,6 +1,7 @@
 import subprocess
 import time
 
+from email_sender import send_email
 from screenshot import setup_screenshot_folder
 
 NUM_TESTS = 5
@@ -26,3 +27,4 @@ def run_speed_tests():
 
 if __name__ == "__main__":
     run_speed_tests()
+    send_email()
