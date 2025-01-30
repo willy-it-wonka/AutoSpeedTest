@@ -62,3 +62,7 @@ def run_speedtest():
         take_screenshot(driver)
     finally:
         driver.quit()
+
+
+if __name__ == "__main__":
+    run_speedtest()

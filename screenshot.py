@@ -9,7 +9,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 SCREENSHOT_DIR = "./screenshots"
 ELEMENT_AFTER_TEST_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[3]/div/div[1]/ul/li[1]/a'
-FOLDER_DELETED_MESSAGE = "Deleted folder with old screenshots."
 FOLDER_CREATED_MESSAGE = "Folder {} created."
 SCREENSHOT_SAVED_MESSAGE = "Screenshot saved: {}"
 TIMEOUT_ERROR = "The test has not been completed. Unable to take a screenshot."
@@ -17,8 +16,6 @@ TIMEOUT_ERROR = "The test has not been completed. Unable to take a screenshot."
 
 def setup_screenshot_folder():
     shutil.rmtree(SCREENSHOT_DIR, ignore_errors=True)
-    print(FOLDER_DELETED_MESSAGE)
-
     os.makedirs(SCREENSHOT_DIR)
     print(FOLDER_CREATED_MESSAGE.format(SCREENSHOT_DIR))
 
