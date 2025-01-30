@@ -6,5 +6,6 @@ options = Options()
 options.add_argument("-private-window")
 
 driver = webdriver.Firefox(service=Service("/snap/bin/geckodriver"), options=options)
+driver.maximize_window()
 
 driver.get("http://www.speedtest.net")
