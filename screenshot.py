@@ -8,32 +8,34 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
 SCREENSHOT_DIR = "./screenshots"
+ELEMENT_AFTER_TEST_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[3]/div/div[1]/ul/li[1]/a'
+FOLDER_DELETED_MESSAGE = "Deleted folder with old screenshots."
+FOLDER_CREATED_MESSAGE = "Folder {} created."
+SCREENSHOT_SAVED_MESSAGE = "Screenshot saved: {}"
+TIMEOUT_ERROR = "The test has not been completed. Unable to take a screenshot."
 
 
-def delete_folder():
-    if os.path.exists(SCREENSHOT_DIR):
-        shutil.rmtree(SCREENSHOT_DIR)
-        print("Deleted folder with old screenshots.")
+def setup_screenshot_folder():
+    shutil.rmtree(SCREENSHOT_DIR, ignore_errors=True)
+    print(FOLDER_DELETED_MESSAGE)
+
+    os.makedirs(SCREENSHOT_DIR)
+    print(FOLDER_CREATED_MESSAGE.format(SCREENSHOT_DIR))
 
 
 def take_screenshot(driver):
     try:
-        WebDriverWait(driver, 60).until(
+        WebDriverWait(driver, 90).until(
             ec.visibility_of_element_located(
-                (By.XPATH, '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[3]/div/div[1]/ul/li[1]/a'))
+                (By.XPATH, ELEMENT_AFTER_TEST_XPATH))
         )
 
         time.sleep(1)
 
-        if not os.path.exists(SCREENSHOT_DIR):
-            os.makedirs(SCREENSHOT_DIR)
-            print(f"Folder {SCREENSHOT_DIR} created.")
-
         screenshot_name = f"screenshot_{time.strftime('%d.%m.%Y_%H-%M-%S')}.png"
         screenshot_path = os.path.join(SCREENSHOT_DIR, screenshot_name)
         driver.save_screenshot(screenshot_path)
-
-        print(f"Screenshot saved: {screenshot_path}")
+        print(SCREENSHOT_SAVED_MESSAGE.format(screenshot_path))
 
     except TimeoutException:
-        print("The test has not been completed. Unable to take a screenshot.")
+        print(TIMEOUT_ERROR)

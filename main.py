@@ -1,5 +1,5 @@
-from screenshot import delete_folder
+from screenshot import setup_screenshot_folder
 from speedtest import run_speedtest
 
-delete_folder()
+setup_screenshot_folder()
 run_speedtest()
