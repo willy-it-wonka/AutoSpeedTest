@@ -23,6 +23,8 @@ def take_screenshot(driver):
                 (By.XPATH, '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[3]/div/div[1]/ul/li[1]/a'))
         )
 
+        time.sleep(1)
+
         if not os.path.exists(SCREENSHOT_DIR):
             os.makedirs(SCREENSHOT_DIR)
             print(f"Folder {SCREENSHOT_DIR} created.")

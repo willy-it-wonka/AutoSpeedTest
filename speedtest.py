@@ -1,5 +1,3 @@
-import time
-
 from selenium import webdriver
 from selenium.common import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.by import By
