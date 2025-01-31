@@ -3,6 +3,8 @@ import os
 import smtplib
 from email.message import EmailMessage
 
+from dotenv import load_dotenv
+
 SCREENSHOT_DIR = "./screenshots"
 EMAIL_SUBJECT = "Speed test result"
 EMAIL_CONTENT = "Screenshots are in attachment."
@@ -12,11 +14,12 @@ FILES_ADDED_MESSAGE = "Added {} files to email."
 EMAIL_SENT_MESSAGE = "Email sent successfully!"
 EMAIL_SENDING_ERROR = "Error while sending email: {}"
 
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
-EMAIL_SENDER = "YOUR_GMAIL"
-APP_PASSWORD = "APP_PASSWORD"
-EMAIL_RECIPIENT = "EMAIL_RECIPIENT"
+load_dotenv()
+SMTP_SERVER = os.getenv("SMTP_SERVER")
+SMTP_PORT = int(os.getenv("SMTP_PORT"))
+EMAIL_SENDER = os.getenv("EMAIL_SENDER")
+APP_PASSWORD = os.getenv("APP_PASSWORD")
+EMAIL_RECIPIENT = os.getenv("EMAIL_RECIPIENT")
 
 
 def get_screenshot_files():
