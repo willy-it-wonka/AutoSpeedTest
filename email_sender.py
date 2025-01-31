@@ -1,8 +1,16 @@
 import mimetypes
 import os
 import smtplib
-
 from email.message import EmailMessage
+
+SCREENSHOT_DIR = "./screenshots"
+EMAIL_SUBJECT = "Speed test result"
+EMAIL_CONTENT = "Screenshots are in attachment."
+FOLDER_NOT_EXIST_MESSAGE = "Folder does not exist!"
+FILES_NOT_EXIST_MESSAGE = "No PNG files found in the folder!"
+FILES_ADDED_MESSAGE = "Added {} files to email."
+EMAIL_SENT_MESSAGE = "Email sent successfully!"
+EMAIL_SENDING_ERROR = "Error while sending email: {}"
 
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
@@ -10,42 +18,56 @@ EMAIL_SENDER = "YOUR_GMAIL"
 APP_PASSWORD = "APP_PASSWORD"
 EMAIL_RECIPIENT = "EMAIL_RECIPIENT"
 
-screenshot_folder = "./screenshots"
 
-msg = EmailMessage()
-msg["From"] = EMAIL_SENDER
-msg["To"] = EMAIL_RECIPIENT
-msg["Subject"] = "Speed test result"
-msg.set_content("Screenshots are in attachment.")
+def get_screenshot_files():
+    if not os.path.exists(SCREENSHOT_DIR):
+        print(FOLDER_NOT_EXIST_MESSAGE)
+        return []
+
+    files = [f for f in os.listdir(SCREENSHOT_DIR) if f.endswith(".png")]
+
+    if not files:
+        print(FILES_NOT_EXIST_MESSAGE)
+        return []
+
+    return files
+
+
+def add_attachments_to_email(msg, files):
+    for file in files:
+        file_path = os.path.join(SCREENSHOT_DIR, file)
+        mime_type, _ = mimetypes.guess_type(file_path)  # Recognizes the file type.
+        mime_type = mime_type or "application/octet-stream"  # Means unknown file type.
+
+        with open(file_path, "rb") as f:
+            msg.add_attachment(
+                f.read(),
+                maintype=mime_type.split('/')[0],  # maintype e.g. "image"
+                subtype=mime_type.split('/')[1],  # subtype e.g. "png"
+                filename=file
+            )
+
+    print(FILES_ADDED_MESSAGE.format(len(files)))
 
 
 def send_email():
-    if not os.path.exists(screenshot_folder):
-        print("Folder does not exist!")
-        return
-
-    files = [f for f in os.listdir(screenshot_folder) if f.endswith(".png")]
-
+    files = get_screenshot_files()
     if not files:
-        print("No PNG files found in the folder!")
         return
 
-    for file in files:
-        file_path = os.path.join(screenshot_folder, file)
-        mime_type, _ = mimetypes.guess_type(file_path)
-        mime_type = mime_type or "application/octet-stream"
+    msg = EmailMessage()
+    msg["From"] = EMAIL_SENDER
+    msg["To"] = EMAIL_RECIPIENT
+    msg["Subject"] = EMAIL_SUBJECT
+    msg.set_content(EMAIL_CONTENT)
 
-        with open(file_path, "rb") as f:
-            msg.add_attachment(f.read(), maintype=mime_type.split('/')[0], subtype=mime_type.split('/')[1],
-                               filename=file)
-
-    print(f"Added {len(files)} files to email.")
+    add_attachments_to_email(msg, files)
 
     try:
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
             server.starttls()
             server.login(EMAIL_SENDER, APP_PASSWORD)
             server.send_message(msg)
-        print("Email sent successfully!")
+        print(EMAIL_SENT_MESSAGE)
     except Exception as e:
-        print(f"Error while sending email: {e}")
+        print(EMAIL_SENDING_ERROR.format(e))
