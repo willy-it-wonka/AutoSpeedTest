@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
 SCREENSHOT_DIR = "./screenshots"
-ELEMENT_AFTER_TEST_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[3]/div/div[1]/ul/li[1]/a'
+ELEMENT_AFTER_TEST_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[3]/div/div[3]/div/div/div[1]/div/div/div[2]/div[2]/a'
 FOLDER_CREATED_MESSAGE = "Folder {} created."
 SCREENSHOT_SAVED_MESSAGE = "Screenshot saved: {}"
 TIMEOUT_ERROR = "The test has not been completed. Unable to take a screenshot."
