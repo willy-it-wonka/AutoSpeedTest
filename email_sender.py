@@ -6,8 +6,8 @@ from email.message import EmailMessage
 from dotenv import load_dotenv
 
 SCREENSHOT_DIR = "./screenshots"
-EMAIL_SUBJECT = "Speed test result"
-EMAIL_CONTENT = "Screenshots are in attachment."
+EMAIL_SUBJECT = "Speedtest report"
+EMAIL_CONTENT = "Screenshots are in attachment.\n\nCode:https://github.com/willy-it-wonka/AutoSpeedTest"
 FOLDER_NOT_EXIST_MESSAGE = "Folder does not exist!"
 FILES_NOT_EXIST_MESSAGE = "No PNG files found in the folder!"
 FILES_ADDED_MESSAGE = "Added {} files to email."
