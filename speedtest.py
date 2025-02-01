@@ -21,7 +21,7 @@ SELECT_SERVER_ERROR = f"Could not select {SERVER_LOCATION} server."
 ACCEPT_XPATH = '//*[@id="onetrust-accept-btn-handler"]'
 CHANGE_SERVER_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[3]/div/div[4]/div/div[3]/div/div/div[4]/a'
 SEARCH_SERVER_INPUT_XPATH = '//*[@id="host-search"]'
-CHOSEN_SERVER_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[3]/div/div[7]/div/div/div/div[3]/div/div/ul/li[3]/a'  # Tokyo - Contabo
+CHOSEN_SERVER_XPATH = "//li[a/span[contains(text(), 'Tokyo')] and a/span[contains(text(), 'Contabo')]]/a"
 START_TEST_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[1]/a/span[4]'
 PRIVACY_POLICY_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[1]/div/div/div/a'
 
