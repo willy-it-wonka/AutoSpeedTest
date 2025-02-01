@@ -1,7 +1,7 @@
 import time
 
 from selenium import webdriver
-from selenium.common import TimeoutException, NoSuchElementException
+from selenium.common import TimeoutException, NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
@@ -61,26 +61,31 @@ def open_server_selection(driver):
 
 def search_for_server(driver):
     search_input = WebDriverWait(driver, 5).until(
-        ec.presence_of_element_located((By.XPATH, SEARCH_SERVER_INPUT_XPATH))
+        ec.element_to_be_clickable((By.XPATH, SEARCH_SERVER_INPUT_XPATH))
     )
     search_input.send_keys(SERVER_LOCATION)
     time.sleep(1)
 
 
-def select_server_from_list(driver):
+def select_server_from_list(driver, attempt_retry=True):
     try:
         WebDriverWait(driver, 5).until(
             ec.element_to_be_clickable((By.XPATH, CHOSEN_SERVER_XPATH))
         ).click()
         print(SELECT_SERVER_SUCCESS_MESSAGE)
+    except StaleElementReferenceException:
+        if attempt_retry:
+            time.sleep(1)
+            print(RESELECTION_MESSAGE)
+            select_server(driver, False)
     except TimeoutException:
         print(SELECT_SERVER_ERROR)
 
 
-def select_server(driver):
+def select_server(driver, attempt_retry=True):
     open_server_selection(driver)
     search_for_server(driver)
-    select_server_from_list(driver)
+    select_server_from_list(driver, attempt_retry)
 
 
 def start_speedtest(driver):
