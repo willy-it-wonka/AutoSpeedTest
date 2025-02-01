@@ -4,6 +4,7 @@ import time
 
 from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -27,7 +28,7 @@ def take_screenshot(driver):
                 (By.XPATH, ELEMENT_AFTER_TEST_XPATH))
         )
 
-        time.sleep(1)
+        close_modal(driver)
 
         screenshot_name = f"screenshot_{time.strftime('%d.%m.%Y_%H-%M-%S')}.png"
         screenshot_path = os.path.join(SCREENSHOT_DIR, screenshot_name)
@@ -36,3 +37,9 @@ def take_screenshot(driver):
 
     except TimeoutException:
         print(TIMEOUT_ERROR)
+
+
+def close_modal(driver):
+    time.sleep(5)
+    driver.find_element(By.TAG_NAME, "body").send_keys(Keys.ESCAPE)
+    time.sleep(1)
