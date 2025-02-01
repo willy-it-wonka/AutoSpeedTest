@@ -15,6 +15,7 @@ SPEEDTEST_URL = "http://www.speedtest.net"
 BUTTON_NOT_FOUND_ERROR = "{} was not found while waiting."
 SERVER_LOCATION = "Tokyo"
 SELECT_SERVER_SUCCESS_MESSAGE = f"Selected {SERVER_LOCATION} server successfully."
+RESELECTION_MESSAGE = f"Retrying selection of {SERVER_LOCATION} server..."
 SELECT_SERVER_ERROR = f"Could not select {SERVER_LOCATION} server."
 
 ACCEPT_XPATH = '//*[@id="onetrust-accept-btn-handler"]'
@@ -58,28 +59,28 @@ def open_server_selection(driver):
     time.sleep(1)
 
 
-def search_for_server(driver, location):
+def search_for_server(driver):
     search_input = WebDriverWait(driver, 5).until(
         ec.presence_of_element_located((By.XPATH, SEARCH_SERVER_INPUT_XPATH))
     )
-    search_input.send_keys(location)
+    search_input.send_keys(SERVER_LOCATION)
     time.sleep(1)
 
 
-def select_server_from_list(driver, location):
+def select_server_from_list(driver):
     try:
         WebDriverWait(driver, 5).until(
             ec.element_to_be_clickable((By.XPATH, CHOSEN_SERVER_XPATH))
         ).click()
         print(SELECT_SERVER_SUCCESS_MESSAGE)
     except TimeoutException:
-        print(SELECT_SERVER_ERROR.format(location))
+        print(SELECT_SERVER_ERROR)
 
 
 def select_server(driver):
     open_server_selection(driver)
-    search_for_server(driver, SERVER_LOCATION)
-    select_server_from_list(driver, SERVER_LOCATION)
+    search_for_server(driver)
+    select_server_from_list(driver)
 
 
 def start_speedtest(driver):
