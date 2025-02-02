@@ -94,6 +94,7 @@ def search_for_server(driver):
     if not available_servers or not any(
             f"{SERVER_LOCATION} {SERVER_PROVIDER}" == server for server in available_servers):
         print(INVALID_DATA_MESSAGE)
+        SERVER_LOCATION = "Tokyo"
         search_input.clear()
         search_input.send_keys(SERVER_LOCATION)
         time.sleep(1)
