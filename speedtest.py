@@ -45,7 +45,9 @@ def click_if_present(driver, timeout, by, xpath):
         button = WebDriverWait(driver, timeout).until(
             ec.element_to_be_clickable((by, xpath))
         )
+        time.sleep(1)
         button.click()
+        time.sleep(1)
     except (TimeoutException, NoSuchElementException):
         print(BUTTON_NOT_FOUND_ERROR.format(xpath))
 
@@ -56,7 +58,6 @@ def accept_cookies(driver):
 
 def open_server_selection(driver):
     click_if_present(driver, 5, By.XPATH, CHANGE_SERVER_XPATH)
-    time.sleep(1)
 
 
 def search_for_server(driver):
@@ -64,14 +65,11 @@ def search_for_server(driver):
         ec.element_to_be_clickable((By.XPATH, SEARCH_SERVER_INPUT_XPATH))
     )
     search_input.send_keys(SERVER_LOCATION)
-    time.sleep(1)
 
 
 def select_server_from_list(driver, attempt_retry=True):
     try:
-        WebDriverWait(driver, 5).until(
-            ec.element_to_be_clickable((By.XPATH, CHOSEN_SERVER_XPATH))
-        ).click()
+        click_if_present(driver, 5, By.XPATH, CHOSEN_SERVER_XPATH)
         print(SELECT_SERVER_SUCCESS_MESSAGE)
     except StaleElementReferenceException:
         if attempt_retry:
