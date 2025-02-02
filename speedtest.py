@@ -10,18 +10,35 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from screenshot import take_screenshot
 
+
+def get_user_server_choice():
+    user_input = input("Specify the location and server provider (e.g. Tokyo Verizon): ").strip()
+
+    if user_input:
+        user_data = user_input.split(maxsplit=1)
+        if len(user_data) == 2 and len(user_data[0]) > 2 and len(user_data[1]) > 2:
+            return user_data[0], user_data[1]
+
+    return "Tokyo", "Contabo"
+
+
+SERVER_LOCATION, SERVER_PROVIDER = get_user_server_choice()
+
 GECKODRIVER_PATH = "/snap/bin/geckodriver"
 SPEEDTEST_URL = "http://www.speedtest.net"
 BUTTON_NOT_FOUND_ERROR = "{} was not found while waiting."
-SERVER_LOCATION = "Tokyo"
-SELECT_SERVER_SUCCESS_MESSAGE = f"Selected {SERVER_LOCATION} server successfully."
-RESELECTION_MESSAGE = f"Retrying selection of {SERVER_LOCATION} server..."
-SELECT_SERVER_ERROR = f"Could not select {SERVER_LOCATION} server."
+
+SELECT_SERVER_SUCCESS_MESSAGE = f"Selected {SERVER_LOCATION} {SERVER_PROVIDER} server successfully."
+RESELECTION_MESSAGE = f"Retrying selection of {SERVER_LOCATION} {SERVER_PROVIDER} server..."
+SELECTED_SERVER_ERROR = f"Could not select {SERVER_LOCATION} {SERVER_PROVIDER} server."
+AVAILABLE_SERVERS_MESSAGE = "List of available servers: "
+INVALID_DATA_MESSAGE = "This server is unavailable or incorrect data has been entered. I use the default values: Tokyo Contabo."
 
 ACCEPT_XPATH = '//*[@id="onetrust-accept-btn-handler"]'
 CHANGE_SERVER_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[3]/div/div[4]/div/div[3]/div/div/div[4]/a'
 SEARCH_SERVER_INPUT_XPATH = '//*[@id="host-search"]'
-CHOSEN_SERVER_XPATH = "//li[a/span[contains(text(), 'Tokyo')] and a/span[contains(text(), 'Contabo')]]/a"
+CHOSEN_SERVER_XPATH = f"//li[a/span[contains(text(), '{SERVER_LOCATION}')] and a/span[contains(text(), '{SERVER_PROVIDER}')]]/a"
+SERVER_LIST_XPATH = "//li/a"  # TODO: Fix, this xpath collects data from all lists
 START_TEST_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[1]/a/span[4]'
 PRIVACY_POLICY_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[1]/div/div/div/a'
 
@@ -61,10 +78,26 @@ def open_server_selection(driver):
 
 
 def search_for_server(driver):
+    global SERVER_LOCATION, SERVER_PROVIDER, CHOSEN_SERVER_XPATH
+
     search_input = WebDriverWait(driver, 5).until(
         ec.element_to_be_clickable((By.XPATH, SEARCH_SERVER_INPUT_XPATH))
     )
+    search_input.clear()
     search_input.send_keys(SERVER_LOCATION)
+    time.sleep(1)
+
+    server_list = driver.find_elements(By.XPATH, SERVER_LIST_XPATH)
+    available_servers = [server.text for server in server_list if server.text.strip()]
+    print(AVAILABLE_SERVERS_MESSAGE, available_servers)
+
+    if not available_servers or not any(
+            f"{SERVER_LOCATION} {SERVER_PROVIDER}" == server for server in available_servers):
+        print(INVALID_DATA_MESSAGE)
+        search_input.clear()
+        search_input.send_keys(SERVER_LOCATION)
+        time.sleep(1)
+        CHOSEN_SERVER_XPATH = "//li[a/span[contains(text(), 'Tokyo')] and a/span[contains(text(), 'Contabo')]]/a"
 
 
 def select_server_from_list(driver, attempt_retry=True):
@@ -77,7 +110,7 @@ def select_server_from_list(driver, attempt_retry=True):
             print(RESELECTION_MESSAGE)
             select_server(driver, False)
     except TimeoutException:
-        print(SELECT_SERVER_ERROR)
+        print(SELECTED_SERVER_ERROR)
 
 
 def select_server(driver, attempt_retry=True):
