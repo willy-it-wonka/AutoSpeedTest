@@ -10,37 +10,35 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from screenshot import take_screenshot
 
+GECKODRIVER_PATH = "/snap/bin/geckodriver"
+SPEEDTEST_URL = "http://www.speedtest.net"
+
+SERVER_LOCATION = "Tokyo"
+SERVER_PROVIDER = "Contabo"
+
+WELCOME_MESSAGE = "Specify the location and provider of the server (e.g. Tokyo Verizon). If the server is unavailable, or you enter incorrect data, the default one will be used: Tokyo Contabo.\n"
+BUTTON_NOT_FOUND_ERROR = "{} was not found while waiting."
+SELECT_SERVER_SUCCESS_MESSAGE = "Selected {} {} server successfully."
+RESELECTION_MESSAGE = "Retrying selection of {} {} server..."
+SELECTED_SERVER_ERROR = "Could not select server."
+AVAILABLE_SERVERS_MESSAGE = "List of available servers: "
+INVALID_DATA_MESSAGE = "This server is unavailable or incorrect data has been entered."
+
+ACCEPT_XPATH = '//*[@id="onetrust-accept-btn-handler"]'
+CHANGE_SERVER_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[3]/div/div[4]/div/div[3]/div/div/div[4]/a'
+SEARCH_SERVER_INPUT_XPATH = '//*[@id="host-search"]'
+SERVER_LIST_XPATH = "//li/a"  # TODO: Fix, this xpath collects data from all lists
+START_TEST_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[1]/a/span[4]'
+PRIVACY_POLICY_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[1]/div/div/div/a'
+
 
 def get_user_server_choice():
-    user_input = input("Specify the location and server provider (e.g. Tokyo Verizon): ").strip()
+    user_input = input(WELCOME_MESSAGE).strip()
 
     if user_input:
         user_data = user_input.split(maxsplit=1)
         if len(user_data) == 2 and len(user_data[0]) > 2 and len(user_data[1]) > 2:
             return user_data[0], user_data[1]
-
-    return "Tokyo", "Contabo"
-
-
-SERVER_LOCATION, SERVER_PROVIDER = get_user_server_choice()
-
-GECKODRIVER_PATH = "/snap/bin/geckodriver"
-SPEEDTEST_URL = "http://www.speedtest.net"
-BUTTON_NOT_FOUND_ERROR = "{} was not found while waiting."
-
-SELECT_SERVER_SUCCESS_MESSAGE = f"Selected {SERVER_LOCATION} {SERVER_PROVIDER} server successfully."
-RESELECTION_MESSAGE = f"Retrying selection of {SERVER_LOCATION} {SERVER_PROVIDER} server..."
-SELECTED_SERVER_ERROR = f"Could not select {SERVER_LOCATION} {SERVER_PROVIDER} server."
-AVAILABLE_SERVERS_MESSAGE = "List of available servers: "
-INVALID_DATA_MESSAGE = "This server is unavailable or incorrect data has been entered. I use the default values: Tokyo Contabo."
-
-ACCEPT_XPATH = '//*[@id="onetrust-accept-btn-handler"]'
-CHANGE_SERVER_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[3]/div/div[4]/div/div[3]/div/div/div[4]/a'
-SEARCH_SERVER_INPUT_XPATH = '//*[@id="host-search"]'
-CHOSEN_SERVER_XPATH = f"//li[a/span[contains(text(), '{SERVER_LOCATION}')] and a/span[contains(text(), '{SERVER_PROVIDER}')]]/a"
-SERVER_LIST_XPATH = "//li/a"  # TODO: Fix, this xpath collects data from all lists
-START_TEST_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[1]/a/span[4]'
-PRIVACY_POLICY_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[1]/div/div/div/a'
 
 
 def run_firefox():
@@ -59,9 +57,8 @@ def open_speedtest_page(driver):
 
 def click_if_present(driver, timeout, by, xpath):
     try:
-        button = WebDriverWait(driver, timeout).until(
-            ec.element_to_be_clickable((by, xpath))
-        )
+        button = (WebDriverWait(driver, timeout).
+                  until(ec.element_to_be_clickable((by, xpath))))
         time.sleep(1)
         button.click()
         time.sleep(1)
@@ -77,38 +74,42 @@ def open_server_selection(driver):
     click_if_present(driver, 5, By.XPATH, CHANGE_SERVER_XPATH)
 
 
-def search_for_server(driver):
-    global SERVER_LOCATION, SERVER_PROVIDER, CHOSEN_SERVER_XPATH
+def get_available_servers(driver):
+    server_list = driver.find_elements(By.XPATH, SERVER_LIST_XPATH)
+    available_servers = [server.text for server in server_list if server.text.strip()]
+    print(AVAILABLE_SERVERS_MESSAGE, available_servers)
+    return available_servers
 
-    search_input = WebDriverWait(driver, 5).until(
-        ec.element_to_be_clickable((By.XPATH, SEARCH_SERVER_INPUT_XPATH))
-    )
+
+def search_for_server(driver):
+    global SERVER_LOCATION, SERVER_PROVIDER
+
+    search_input = (WebDriverWait(driver, 5)
+                    .until(ec.element_to_be_clickable((By.XPATH, SEARCH_SERVER_INPUT_XPATH))))
     search_input.clear()
     search_input.send_keys(SERVER_LOCATION)
     time.sleep(1)
 
-    server_list = driver.find_elements(By.XPATH, SERVER_LIST_XPATH)
-    available_servers = [server.text for server in server_list if server.text.strip()]
-    print(AVAILABLE_SERVERS_MESSAGE, available_servers)
+    available_servers = get_available_servers(driver)
 
     if not available_servers or not any(
             f"{SERVER_LOCATION} {SERVER_PROVIDER}" == server for server in available_servers):
         print(INVALID_DATA_MESSAGE)
-        SERVER_LOCATION = "Tokyo"
+        SERVER_LOCATION, SERVER_PROVIDER = "Tokyo", "Contabo"
         search_input.clear()
         search_input.send_keys(SERVER_LOCATION)
         time.sleep(1)
-        CHOSEN_SERVER_XPATH = "//li[a/span[contains(text(), 'Tokyo')] and a/span[contains(text(), 'Contabo')]]/a"
 
 
 def select_server_from_list(driver, attempt_retry=True):
+    server_xpath = f"//li[a/span[contains(text(), '{SERVER_LOCATION}')] and a/span[contains(text(), '{SERVER_PROVIDER}')]]/a"
     try:
-        click_if_present(driver, 5, By.XPATH, CHOSEN_SERVER_XPATH)
-        print(SELECT_SERVER_SUCCESS_MESSAGE)
+        click_if_present(driver, 5, By.XPATH, server_xpath)
+        print(SELECT_SERVER_SUCCESS_MESSAGE.format(SERVER_LOCATION, SERVER_PROVIDER))
     except StaleElementReferenceException:
         if attempt_retry:
             time.sleep(1)
-            print(RESELECTION_MESSAGE)
+            print(RESELECTION_MESSAGE.format(SERVER_LOCATION, SERVER_PROVIDER))
             select_server(driver, False)
     except TimeoutException:
         print(SELECTED_SERVER_ERROR)
@@ -129,6 +130,9 @@ def close_privacy_policy(driver):
 
 
 def run_speedtest():
+    global SERVER_LOCATION, SERVER_PROVIDER
+    SERVER_LOCATION, SERVER_PROVIDER = get_user_server_choice()
+
     driver = run_firefox()
     try:
         open_speedtest_page(driver)
