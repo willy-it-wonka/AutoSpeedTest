@@ -23,7 +23,7 @@ EMAIL_RECIPIENT = os.getenv("EMAIL_RECIPIENT")
 
 
 def get_screenshot_files():
-    if not os.path.exists(SCREENSHOT_DIR):
+    if not os.path.isdir(SCREENSHOT_DIR):
         print(FOLDER_NOT_EXIST_MESSAGE)
         return []
 
