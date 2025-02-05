@@ -40,6 +40,8 @@ def get_user_server_choice():
         if len(user_data) == 2 and len(user_data[0]) > 2 and len(user_data[1]) > 2:
             return user_data[0], user_data[1]
 
+    return SERVER_LOCATION, SERVER_PROVIDER
+
 
 def run_firefox():
     options = Options()
