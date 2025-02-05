@@ -2,6 +2,17 @@
 [Instruction](https://itsupport.umd.edu/itsupport?id=kb_article_view&sysparm_article=KB0015112) how to create an app password for gmail.
 </br></br></br>
 
+## Run the Python script in a terminal
+1. Open a terminal and navigate to the target directory (set your USER_NAME):
+   ```
+   cd /home/USER_NAME/Desktop/AutoSpeedTest
+   ```
+2. Run the Python script:
+   ```
+   python3 main.py
+   ```
+</br>
+
 ## Creating a .desktop executable file for Ubuntu
 1. Create the .desktop file on the Desktop:
    ```
