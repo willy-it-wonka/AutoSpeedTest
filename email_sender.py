@@ -7,11 +7,13 @@ from dotenv import load_dotenv
 
 SCREENSHOT_DIR = "./screenshots"
 EMAIL_SUBJECT = "Speedtest report"
-EMAIL_CONTENT = "Screenshots are in attachment.\n\nCode:https://github.com/willy-it-wonka/AutoSpeedTest"
+EMAIL_CONTENT = "Screenshots are in attachment.\n\nCode: https://github.com/willy-it-wonka/AutoSpeedTest"
 FOLDER_NOT_EXIST_MESSAGE = "Folder does not exist!"
 FILES_NOT_EXIST_MESSAGE = "No PNG files found in the folder!"
 FILES_ADDED_MESSAGE = "Added {} files to email."
-EMAIL_SENT_MESSAGE = "Email sent successfully!"
+EMAIL_INPUT_MESSAGE = "Enter the e-mail address of the report recipient.\n"
+EMAIL_SENT_MESSAGE = "Email sent successfully to {}"
+EMAIL_NOT_PROVIDED_ERROR = "No email address was provided. Sending has been canceled."
 EMAIL_SENDING_ERROR = "Error while sending email: {}"
 
 load_dotenv()
@@ -19,7 +21,6 @@ SMTP_SERVER = os.getenv("SMTP_SERVER")
 SMTP_PORT = int(os.getenv("SMTP_PORT"))
 EMAIL_SENDER = os.getenv("EMAIL_SENDER")
 APP_PASSWORD = os.getenv("APP_PASSWORD")
-EMAIL_RECIPIENT = os.getenv("EMAIL_RECIPIENT")
 
 
 def get_screenshot_files():
@@ -58,9 +59,14 @@ def send_email():
     if not files:
         return
 
+    email_recipient = input(EMAIL_INPUT_MESSAGE).strip()
+    if not email_recipient:
+        print(EMAIL_NOT_PROVIDED_ERROR)
+        return
+
     msg = EmailMessage()
     msg["From"] = EMAIL_SENDER
-    msg["To"] = EMAIL_RECIPIENT
+    msg["To"] = email_recipient
     msg["Subject"] = EMAIL_SUBJECT
     msg.set_content(EMAIL_CONTENT)
 
@@ -71,6 +77,6 @@ def send_email():
             server.starttls()
             server.login(EMAIL_SENDER, APP_PASSWORD)
             server.send_message(msg)
-        print(EMAIL_SENT_MESSAGE)
+        print(EMAIL_SENT_MESSAGE.format(email_recipient))
     except Exception as e:
         print(EMAIL_SENDING_ERROR.format(e))
