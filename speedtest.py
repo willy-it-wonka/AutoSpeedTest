@@ -27,7 +27,7 @@ INVALID_DATA_MESSAGE = "This server is unavailable or incorrect data has been en
 ACCEPT_XPATH = '//*[@id="onetrust-accept-btn-handler"]'
 CHANGE_SERVER_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[3]/div/div[4]/div/div[3]/div/div/div[4]/a'
 SEARCH_SERVER_INPUT_XPATH = '//*[@id="host-search"]'
-SERVER_LIST_XPATH = "//li/a"  # TODO: Fix, this xpath collects data from all lists
+SERVER_LIST_XPATH = "//li/a"
 START_TEST_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[3]/div[1]/a/span[4]'
 PRIVACY_POLICY_XPATH = '/html/body/div[3]/div[1]/div[3]/div/div/div/div[2]/div[1]/div/div/div/a'
 
