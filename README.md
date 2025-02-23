@@ -95,4 +95,15 @@
    * Press `Ctrl + X`.
    * Press `Y` to confirm saving.
    * Press `Enter` to save and exit.
-8. ...
+8. Compile the `.bin` file:
+   ```
+   pyinstaller AutoSpeedTest.spec
+   ```
+10. Change permissions:
+    ```
+    chmod +x dist/AutoSpeedTest
+    ```
+11. Run `AutoSpeedTest.bin`:
+    ```
+    ./dist/AutoSpeedTest
+    ```
