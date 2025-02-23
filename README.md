@@ -99,7 +99,7 @@
    ```
    pyinstaller AutoSpeedTest.spec
    ```
-10. Change permissions:
+10. Grant execution permissions:
     ```
     chmod +x dist/AutoSpeedTest
     ```
@@ -107,3 +107,18 @@
     ```
     ./dist/AutoSpeedTest
     ```
+</br>
+
+## How to run a .bin file like a system command using its name?
+1. Move it to `/usr/local/bin/`:
+   ```
+   sudo mv dist/AutoSpeedTest /usr/local/bin/
+   ```
+2. Grant execution permissions:
+   ```
+   sudo chmod +x /usr/local/bin/AutoSpeedTest
+   ```
+3. Now you can run the application from anywhere, just use:
+   ```
+   AutoSpeedTest
+   ```
