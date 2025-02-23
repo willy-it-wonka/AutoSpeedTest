@@ -50,4 +50,49 @@
 
 ## Creating a .bin executable file for Ubuntu
 **This is the best solution - we will be able to run our application using a `.bin` file on any Linux computer.**
-   
+1. Install `pipx`:
+   ```
+   sudo apt install pipx
+   ```
+   `pipx` is a package manager that allows you to install Python applications in isolated environments. It ensures that tools like `pyinstaller` do not interfere with system-wide packages.
+2. Add pipx to your system's PATH, ensuring that installed applications (like PyInstaller) can be used from anywhere:
+   ```
+   pipx ensurepath
+   ```
+3. Install `PyInstaller`:
+   ```
+   pipx install pyinstaller
+   ```
+4. Add the necessary dependencies to the PyInstaller environment:
+   ```
+   pipx inject pyinstaller selenium python-dotenv
+   ```
+5. Navigate to the project directory, e.g.:
+   ```
+   cd ./Desktop/AutoSpeedTest
+   ```
+6. Generate the `.spec` file:
+   ```
+   pyinstaller --onefile --name=AutoSpeedTest main.py
+   ```
+7. Open `AutoSpeedTest.spec`:
+   ```
+   nano AutoSpeedTest.spec
+   ```
+   And edit `hiddenimports` in `a = Analysis(`:
+   ```
+   hiddenimports=[
+    'selenium',
+    'selenium.common',
+    'selenium.webdriver',
+    'selenium.webdriver.common',
+    'selenium.webdriver.firefox.service',
+    'selenium.webdriver.firefox.webdriver',
+    'dotenv'
+   ],
+   ```
+   Save the file:
+   * Press `Ctrl + X`.
+   * Press `Y` to confirm saving.
+   * Press `Enter` to save and exit.
+8. ...
