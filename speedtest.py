@@ -7,6 +7,7 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.common.exceptions import ElementNotInteractableException, ElementClickInterceptedException
 
 from screenshot import take_screenshot
 
@@ -64,7 +65,9 @@ def click_if_present(driver, timeout, by, xpath):
         time.sleep(1)
         button.click()
         time.sleep(1)
-    except (TimeoutException, NoSuchElementException):
+    except (
+            TimeoutException, NoSuchElementException, ElementNotInteractableException,
+            ElementClickInterceptedException):
         print(BUTTON_NOT_FOUND_ERROR.format(xpath))
 
 
