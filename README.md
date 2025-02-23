@@ -41,9 +41,13 @@
    ```
    chmod 755 ~/Desktop/AutoSpeedTest.desktop
    ```
-   If you give too broad permissions, GNOME may block the application.
+   If you give too broad permissions (e.g. `+x`), GNOME may block the application.
 5. Mark the file as trusted:
    ```
    gio set ~/Desktop/AutoSpeedTest.desktop metadata::trusted true
    ```
+</br>
+
+## Creating a .bin executable file for Ubuntu
+**This is the best solution - we will be able to run our application using a `.bin` file on any Linux computer.**
    
