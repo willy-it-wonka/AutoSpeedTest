@@ -80,6 +80,7 @@ def open_server_selection(driver):
 
 
 def get_available_servers(driver):
+    time.sleep(1)
     server_list = driver.find_elements(By.XPATH, SERVER_LIST_XPATH)
     available_servers = [server.text for server in server_list if server.text.strip()]
     print(AVAILABLE_SERVERS_MESSAGE, available_servers)
