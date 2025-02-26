@@ -1,3 +1,8 @@
+## Description
+A tool for automatically testing internet speed and generating reports. The script runs multiple tests on Speedtest.net, captures screenshots of the results, and sends them via email.\
+The project uses **Python**, **Selenium WebDriver**, and **SMTP** for email reporting. It is designed for Linux (Ubuntu) and can be easily run via terminal, a .desktop file, or a .bin file.
+</br></br></br>
+
 ## SMTP configuration in .env file
 [Instruction](https://itsupport.umd.edu/itsupport?id=kb_article_view&sysparm_article=KB0015112) how to create an app password for gmail.
 </br></br></br>
